@@ -12,7 +12,7 @@ $sourceFolder 		= $env:BUILD_REPOSITORY_LOCALPATH
 
 $sharedGitFolderName = "g"
 $sharedGitFolderPath = Join-Path $workFolder -ChildPath $sharedGitFolderName
-$configFileName 	 = "CentralizeGitReposConfig.json"
+$configFileName 	 = "DedupeGitReposConfig.json"
 $configFilePath 	 = Join-Path $sharedGitFolderPath $configFileName
 
 function Write-Config {
@@ -42,7 +42,7 @@ if ($repositoryType -eq "TfsGit") {
         Write-VstsTaskDebug "Creating configuration for this agent"
 
         $config = [pscustomobject]@{
-            description  = "Configuration for Centralize Git Repositories custom build step";
+            description  = "Configuration for Dedupe Git Repositories custom build step";
             lastFolderId = 1;
             repos        = @(
                 [pscustomobject]@{
@@ -61,7 +61,7 @@ if ($repositoryType -eq "TfsGit") {
     $repo = $config.repos | Where-Object { $_.collection -eq $collectionId -and $_.teamProject -eq $teamProject -and $_.repository -eq $repository }
 
     if (!$repo) {
-		Write-VstsTaskDebug "Configuring repository for centralization"
+		Write-VstsTaskDebug "Configuring repository for deduplication"
 
         $config.lastFolderId++
 		
@@ -78,10 +78,10 @@ if ($repositoryType -eq "TfsGit") {
 	$sharedRepoFullPath = Join-Path $workFolder $repo.path
 
     if ((Join-Path $sourceFolder "") -eq (Join-Path $sharedRepoFullPath "")) {
-        Write-Output "Build already using a centralized repository at $sourceFolder"
+        Write-Output "Build already using a deduped repository at $sourceFolder"
     }
     else {
-        Write-Output "Migrating build to using a centralized repository at $sharedRepoFullPath"
+        Write-Output "Migrating build to using a deduped repository at $sharedRepoFullPath"
 
         if (!(Test-Path $sharedRepoFullPath)) {
             Write-VstsTaskDebug "Creating shared directory $sharedRepoFullPath for repository"
@@ -91,7 +91,7 @@ if ($repositoryType -eq "TfsGit") {
             Get-ChildItem $sourceFolder -Force | Move-Item -Destination $sharedRepoFullPath
         }
         else {
-            Write-VstsTaskDebug "Repository has already been centralized, removing source folder contents for build at $sourceFolder"
+            Write-VstsTaskDebug "Repository has already been deduped, removing source folder contents for build at $sourceFolder"
             Remove-Item $sourceFolder\* -Recurse -Force 
         }
 		
@@ -100,7 +100,7 @@ if ($repositoryType -eq "TfsGit") {
 
         $mappings.build_sourcesdirectory = $repo.path
 
-        Write-VstsTaskDebug "Updating SourceFolder.json for build at $sourceFolderJson with centralized repository location $($repo.path)"
+        Write-VstsTaskDebug "Updating SourceFolder.json for build at $sourceFolderJson with deduped repository location $($repo.path)"
         $mappings | ConvertTo-Json | Set-Content $sourceFolderJson	
     }
 
