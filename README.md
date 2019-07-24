@@ -10,7 +10,7 @@ An Azure Pipelines task that deduplicates clones of Git repositories on self-hos
 
 ### Motivation
 
-For different Azure Pipelines that build from the same Git repository the Azure Pipelines Agent will create a separate clone for each pipeline. For large repositories with many pipelines this can result in significant disk usage on the agent servers.
+For different Azure Pipelines that build from the same Git repository the Azure Pipelines Agent will create a separate clone for each pipeline. For large repositories with many pipelines this can result in significant disk usage on the agent servers. More details here microsoft/azure-pipelines-agent/1506
 
 
 
