@@ -1,10 +1,19 @@
 # Orbis Azure Pipeline Tasks
 
+Custom Azure Pipeline Tasks
+
+---
+
 ## Dedupe Git Repositories Task
 
-An Azure Pipelines task that deduplicates multiple clones of the same git repository on build agent servers
+An Azure Pipelines task that deduplicates clones of Git repositories on self-hosted Windows agent servers.
 
 ### Motivation
+
+For different Azure Pipelines that build from the same Git repository the Azure Pipelines Agent will create a separate clone for each pipeline. For large repositories with many pipelines this can result in significant disk usage on the agent servers.
+
+
+
 
 ### Build Status
 
@@ -12,6 +21,7 @@ An Azure Pipelines task that deduplicates multiple clones of the same git reposi
 
 
 
+---
 
 
 
