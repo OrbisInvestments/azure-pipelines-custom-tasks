@@ -16,7 +16,6 @@ For different Azure Pipelines that build from the same Git repository, the Azure
 
 [![Build Status](https://dev.azure.com/orbisinvestments/Open%20Source/_apis/build/status/Azure%20Pipeline%20Custom%20Tasks/Centralize%20Git%20Repositories%20Task?branchName=master)](https://dev.azure.com/orbisinvestments/Open%20Source/_build/latest?definitionId=1&branchName=master)
 
-
 ### TODO
 
 - [ ] Automation script to add task to pipelines

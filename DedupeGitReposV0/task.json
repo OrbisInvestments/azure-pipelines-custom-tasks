@@ -1,5 +1,5 @@
 {
-  "id": "547F0DA6-0BDF-43BF-8AFF-5CE57F048BC7",
+  "id": "34210811-E663-4942-89AB-8A977836E042",
   "name": "DedupeGitRepos",
   "friendlyName": "Dedupe Git Repositories",
   "description": "Reuse sources between definitions that build the same git repository",
@@ -13,6 +13,7 @@
     "Minor": 1,
     "Patch": 0
   },
+  "preview": "true",
   "minimumAgentVersion": "1.91.0",
   "instanceNameFormat": "Dedupe Git Repositories",
   "postjobexecution": {
