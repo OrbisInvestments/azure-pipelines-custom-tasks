@@ -1,10 +1,10 @@
 trigger:
   branches:
     include:
-        - master
+      - master
   tags:
    include:
-       - v*
+      - v*
 
 pool:
   vmImage: 'win1803'
