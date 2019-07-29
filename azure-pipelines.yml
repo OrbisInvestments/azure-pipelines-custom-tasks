@@ -19,7 +19,7 @@ steps:
     rootFolderOrFile: '$(Build.SourcesDirectory)/DedupeGitReposV0'
     includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/DedupeGitRepos_$(Build.BuildNumber).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/DedupeGitRepos.zip'
     replaceExistingArchive: true
 
 - task: PublishBuildArtifacts@1
