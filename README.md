@@ -29,7 +29,7 @@ Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to 
     tfx login
     tfx build tasks upload --task-path .
 
-*Note: for on-premise installations tfx is not compatible with self-signed TLS certificates. `tfx login` will store credentials in plain text on disk*
+*Note: for on-premise installations tfx is not compatible with self-signed TLS certificates. `tfx login` will store credentials in plain text on disk.*
 
 ### How to use
 
