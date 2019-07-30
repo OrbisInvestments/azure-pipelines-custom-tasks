@@ -23,7 +23,7 @@ A more efficient approach would be for the agent to share a single clone of the 
 
 Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases), then download and extract **DedupeGitRepos.zip** from the release’s assets. 
 
-Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your Azure DevOps/TFS account or collection under a suitably permissioned identity or PAT:
+Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your Azure DevOps/TFS account or collection with an identity or PAT that is in the admin role at the *All Pools* level:
 
     cd drive:\path\to\extracted\zip
     tfx login
@@ -43,7 +43,7 @@ Or
 
 2. the pipeline's clone is deleted if a clone in the shared location does already exist
     
-Once this is done the task updates the pipeline's cached working directory configuration to point at the shared clone. The next time the pipeline is executed by the agent the pipeline will use the shared clone for its sources. 
+Once this is done the task updates the pipeline's cached working directory configuration to point at the shared clone. All subsequent executions of the pipeline will use the shared clone for its sources. 
 
 To avoid concurrency issues shared clones are created [per-agent](https://github.com/microsoft/azure-pipelines-agent/issues/1506#issuecomment-381361454).
 
