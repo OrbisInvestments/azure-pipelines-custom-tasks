@@ -15,7 +15,7 @@ Tested with Azure DevOps Server 2019 / Azure DevOps Services / TFS 2018 and self
 
 ### Motivation
 
-Given the scenario where multiple Azure Pipelines use the same Git repository as their source, the Azure Pipelines Agent will create a seperate clone of the repository for each of the pipelines it executes. For large repositories with many pipelines this can result in agent working directories that consume significant disk space. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
+Given the scenario where multiple Azure Pipelines use the same Git repository as their source, the Azure Pipelines Agent will create a seperate clone of the repository for each of the pipelines it executes. For large repositories with many pipelines this can result in agent working directories that consume significant amounts of disk space. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
 
 A more efficient approach would be for the agent to share a single clone of the repository amongst all pipelines that use it. The **Dedupe Git Repositories Task** stubs this behaviour by running a *post job execution* script that deduplicates the pipeline's clone and repoints its working directory at a shared clone of the same repository. 
 
