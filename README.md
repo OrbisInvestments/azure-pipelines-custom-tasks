@@ -23,7 +23,7 @@ A more efficient approach would be for the agent to share a single clone of the 
 
 Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases), then download and extract **DedupeGitRepos.zip** from the release’s assets. 
 
-Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your account under a suitably permissioned identity or PAT:
+Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your Azure DevOps/TFS account or collection under a suitably permissioned identity or PAT:
 
     cd drive:\path\to\extracted\zip
     tfx login
