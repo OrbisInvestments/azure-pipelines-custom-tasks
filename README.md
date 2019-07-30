@@ -13,13 +13,13 @@ An Azure Pipelines task that deduplicates clones of Git repositories on self-hos
 
 ### Motivation
 
-Currently the Azure Pipelines Agent will inefficiently clone the same Git repository multiple times for different pipelines. The number of clones the agent will create is a function of the number of pipelines that build the same Git repository. For large repositories with many pipelines this can result in significant disk usage on the agent servers. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
+Currently the Azure Pipelines Agent will inefficiently clone the same Git repository multiple times for different pipelines. The number of clones the agent will create is a function of the number of pipelines that build from the same Git repository. For large repositories with many pipelines this can result in significant disk usage on the agent servers. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
 
-The **Dedupe Git Repositories Task** is a task that circumvents this issue by running a *post job execution* script to deduplicate clones of the same Git repository at the end of the pipeline. 
+The **Dedupe Git Repositories Task** is a task that circumvents this issue by running a *post job execution* script to deduplicate clones of the same Git repository. 
 
 ### Installation
 
-Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases), then download and extract **DedupeGitRepos.zip**
+Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases), then download and extract **DedupeGitRepos.zip** from the release’s assets. 
 
 Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your account under a suitably permissioned identity or PAT:
 
@@ -39,7 +39,7 @@ When executed in a pipeline, the Dedupe Git Repositories Task will determine if 
     2. delete the clone if a shared clone does already exist
 2. Update the pipeline's cached working directory configuration to point at the shared clone
 
-The next time the pipeline is executed by the agent will use the shared clone for its sources. 
+The next time the pipeline is executed the agent will use the shared clone for its sources. 
 
 To avoid concurrency issues shared clones are created [per-agent](https://github.com/microsoft/azure-pipelines-agent/issues/1506#issuecomment-381361454).
 
