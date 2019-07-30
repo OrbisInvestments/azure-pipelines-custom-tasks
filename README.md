@@ -49,7 +49,7 @@ To avoid concurrency issues shared clones are created [per-agent](https://github
 
 ### TODO
 
-- [ ] Automation script to add task to pipelines
+- [ ] Include script to apply task to pipelines
 
 
 ## Credits
