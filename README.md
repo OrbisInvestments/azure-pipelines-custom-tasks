@@ -17,7 +17,7 @@ Given the scenario where multiple Azure Pipelines use the same Git repository as
 
 A more efficient approach would be for the agent to share a single clone of the repository amongst all pipelines that use it.
 
-The **Dedupe Git Repositories Task** is a task that stubs this behaviour by running a *post job execution* script that deduplicate clones of the same Git repository and repoints the pipeline's working directory at a shared clone. 
+The **Dedupe Git Repositories Task** stubs this behaviour by running a *post job execution* script that deduplicate clones of the same Git repository and repoints the pipeline's working directory at a shared clone. 
 
 ### Installation
 
@@ -34,14 +34,15 @@ Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to 
 
 ###  How it works
 
-When executed in a pipeline, the Dedupe Git Repositories Task will determine if the repository clone that was used was a *shared* clone. If not, then the following actions are performed:
+When executed the Dedupe Git Repositories Task will determine if the repository clone that was used by the pipeline was a *shared* clone. If not, then either:
 
-1. Either:
-    1. Move the repository into a shared location (Agent.WorkFolder\g) if a clone for the same repository does not already exist. This becomes the *shared* clone
-    2. delete the clone if a shared clone does already exist
-2. Update the pipeline's cached working directory configuration to point at the shared clone
+1. the pipeline's clone is moved into a shared location (Agent.WorkFolder\g) if a clone for the same repository does not already exist. This becomes the *shared* clone. 
 
-The next time the pipeline is executed the agent will use the shared clone for its sources. 
+Or
+
+2. the pipeline's clone is deleted if a clone in the shared location does already exist
+    
+Once this is done the task update the pipeline's cached working directory configuration to point at the shared clone. The next time the pipeline is executed the agent will use the shared clone for its sources. 
 
 To avoid concurrency issues shared clones are created [per-agent](https://github.com/microsoft/azure-pipelines-agent/issues/1506#issuecomment-381361454).
 
