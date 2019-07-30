@@ -25,9 +25,9 @@ Head over to the latest Dedupe Git Repositories [release](https://github.com/Orb
 
 Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your account under a suitably permissioned identity or PAT:
 
-`tfx login`
-`tfx build tasks upload --task-path .`
-
+    cd drive:\path\to\extracted\zip
+    tfx login
+    tfx build tasks upload --task-path .
 
 ### How to use
 
