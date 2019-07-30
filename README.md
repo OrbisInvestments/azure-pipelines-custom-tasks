@@ -19,6 +19,15 @@ The **Dedupe Git Repositories Task** is a task that circumvents this issue by ru
 
 ### Installation
 
+Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases), then download and extract **DedupeGitRepos.zip**
+
+Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your account under a suitably permissioned identity or PAT:
+
+`tfx login`
+
+`tfx build tasks upload --task-path .`
+
+
 ### How to use
 
 ###  How it works
@@ -30,7 +39,7 @@ When executed in a pipeline, the Dedupe Git Repositories Task will determine if 
     2. delete the clone if a shared clone does already exist
 2. Update the pipeline's cached working directory configuration to point at the shared clone
 
-The next time the pipeline is executed by the agent will use the shared clone for its source. 
+The next time the pipeline is executed by the agent will use the shared clone for its sources. 
 
 To avoid concurrency issues shared clones are created [per-agent](https://github.com/microsoft/azure-pipelines-agent/issues/1506#issuecomment-381361454).
 
