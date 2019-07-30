@@ -5,7 +5,7 @@ Custom Azure Pipeline Tasks
 ---
 ## Dedupe Git Repositories Task
 
-An Azure Pipelines task that deduplicates clones of Git repositories on self-hosted Windows agent servers.
+An Azure Pipelines task for deduplicating clones of Git repositories on self-hosted Windows agent servers.
 
 ### Build Status
 
@@ -13,9 +13,11 @@ An Azure Pipelines task that deduplicates clones of Git repositories on self-hos
 
 ### Motivation
 
-Currently the Azure Pipelines Agent will inefficiently clone the same Git repository multiple times for different pipelines. The number of clones the agent will create is a function of the number of pipelines that build from the same Git repository. For large repositories with many pipelines this can result in significant disk usage on the agent servers. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
+Given the scenario where multiple Azure Pipelines use the same Git repository as their source, the Azure Pipelines Agent will create a seperate clone of the repository for each of the pipelines it executes. For large repositories with many pipelines this can result in agent working directories that consume significant disk space. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
 
-The **Dedupe Git Repositories Task** is a task that circumvents this issue by running a *post job execution* script to deduplicate clones of the same Git repository. 
+A more efficient approach would be for the agent to share a single clone of the repository amongst all pipelines that use it.
+
+The **Dedupe Git Repositories Task** is a task that stubs this behaviour by running a *post job execution* script that deduplicate clones of the same Git repository and repoints the pipeline's working directory at a shared clone. 
 
 ### Installation
 
