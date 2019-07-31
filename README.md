@@ -21,9 +21,9 @@ A more efficient approach would be for the agent to share a single clone of the 
 
 ### Installation
 
-Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases), then download and extract **DedupeGitRepos.zip** from the release’s assets. 
+Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases/latest), then download and extract **DedupeGitRepos.zip** from the release’s assets. 
 
-Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your Azure DevOps/TFS account or collection with an identity or PAT that is in the admin role at the *All Pools* level:
+Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to your Azure DevOps/TFS account or collection with an identity that is in the admin role at the *All Pools* level or a PAT with the *Agent Pools (Read & Manage)* scope:
 
     cd drive:\path\to\extracted\zip
     tfx login
