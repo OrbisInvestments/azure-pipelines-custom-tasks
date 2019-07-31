@@ -11,7 +11,7 @@ An Azure Pipelines task for deduplicating clones of Git repositories on self-hos
 
 [![Build Status](https://dev.azure.com/orbisinvestments/Open%20Source/_apis/build/status/Azure%20Pipeline%20Custom%20Tasks/Centralize%20Git%20Repositories%20Task?branchName=master)](https://dev.azure.com/orbisinvestments/Open%20Source/_build/latest?definitionId=1&branchName=master)
 
-Tested with Azure DevOps Server 2019 / Azure DevOps Services / TFS 2018 and self-hosted Windows Azure Pipelines Agents up to [v2.144.0](https://github.com/microsoft/azure-pipelines-agent/releases/tag/v2.144.0)
+Works with Azure DevOps Server 2019 / Azure DevOps Services / TFS 2018 and self-hosted Windows Azure Pipelines Agents up to [v2.148.2](https://github.com/microsoft/azure-pipelines-agent/releases/tag/v2.148.2)
 
 ### Motivation
 
@@ -29,11 +29,15 @@ Use [tfx](https://github.com/Microsoft/tfs-cli) to upload the extracted task to 
     tfx login
     tfx build tasks upload --task-path .
 
-*Note: for on-premise installations tfx is not compatible with self-signed TLS certificates. `tfx login` will store credentials in plain text on disk.*
+*Note: for on-premise installations tfx is not compatible with self-signed TLS certificates. `tfx login` will store credentials in plain text on disk, you can alternatively pass credentials as part of the `tfx build tasks upload` command*
 
 ### How to use
 
-###  How it works
+Once uploaded to your account/collection add the **Dedupe Git Repositories** task to each pipeline that builds the repository you want to deduplicate. The task can be placed in any position in the job, it will always be executed once the job is completed.
+
+For efficient deduplication of all clones, the step will need to be added to each agent job in a multi-job pipeline.
+
+### How it works
 
 When executed the Dedupe Git Repositories Task will determine if the repository clone that is used by the pipeline is a *shared* clone. If not, then either:
 
@@ -43,14 +47,22 @@ Or
 
 2. the pipeline's clone is deleted if a clone in the shared location does already exist
     
-Once this is done the task updates the pipeline's cached sources directory configuration to point at the shared clone. All subsequent executions of the pipeline will use the shared clone for its sources. 
+Once this is done the task updates the pipeline's cached sources directory configuration to point at the shared clone. All subsequent executions of the pipeline on the agent will use the shared clone for its sources. 
 
 To avoid concurrency issues shared clones are created [per-agent](https://github.com/microsoft/azure-pipelines-agent/issues/1506#issuecomment-381361454).
 
+### Considerations
+
+If a subset of your pipelines *clean sources* the shared clone will be deleted when they run. This will mean other pipelines that do not *clean sources* will end up having to reclone the repository into the shared location. 
+
 ### TODO
 
-- [ ] Include script to apply task to pipelines
+- [ ] Support [change of behavior](https://github.com/microsoft/azure-pipelines-agent/pull/2132) in agent versions [v2.149.2](https://github.com/microsoft/azure-pipelines-agent/releases/tag/v2.149.2) and above
+- [ ] Setup script for automating addition of task to pipelines
 
+## License
+
+The Orbis Azure Pipeline Tasks project is licensed under the [MIT License](LICENSE)
 
 ## Credits
 
