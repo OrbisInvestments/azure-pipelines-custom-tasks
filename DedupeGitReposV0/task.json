@@ -3,8 +3,8 @@
   "name": "DedupeGitRepos",
   "friendlyName": "Dedupe Git Repositories",
   "description": "Reuse clones between pipelines that build the same git repository",
-  "helpUrl": "https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/blob/master/README.md",
-  "helpMarkDown": "[More Information](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks)",
+  "helpUrl": "https://github.com/OrbisInvestments/azure-pipelines-custom-tasks",
+  "helpMarkDown": "[More Information](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks#dedupe-git-repositories-task)",
   "category": "Build",
   "visibility": [
     "Build"
