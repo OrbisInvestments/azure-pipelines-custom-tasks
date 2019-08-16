@@ -6,7 +6,7 @@ $teamProject 		= $env:SYSTEM_TEAMPROJECT
 $workFolder 		= $env:AGENT_WORKFOLDER
 
 $buildDefinitionId 	= $env:SYSTEM_DEFINITIONID
-$repository 		= $env:BUILD_REPOSITORY_NAME
+$repository 		= $env:BUILD_REPOSITORY_ID
 $repositoryType 	= $env:BUILD_REPOSITORY_PROVIDER
 $sourceFolder 		= $env:BUILD_REPOSITORY_LOCALPATH
 
