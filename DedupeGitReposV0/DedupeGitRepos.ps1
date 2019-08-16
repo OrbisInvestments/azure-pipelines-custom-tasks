@@ -14,6 +14,7 @@ $sharedGitFolderName = "g"
 $sharedGitFolderPath = Join-Path $workFolder -ChildPath $sharedGitFolderName
 $configFileName 	 = "DedupeGitReposConfig.json"
 $configFilePath 	 = Join-Path $sharedGitFolderPath $configFileName
+$gitProviders		 = @("TfsGit", "Git", "GitHub")
 
 function Write-Config {
     param (
@@ -36,7 +37,7 @@ function Write-Config {
     $config | ConvertTo-Json | Set-Content $configFilePath
 }
 
-if ($repositoryType -eq "TfsGit") {
+if ($repositoryType -in $gitProviders)  {
 
     if (!(Test-Path $configFilePath -PathType Leaf)) {
         Write-VstsTaskDebug "Creating configuration for this agent"
