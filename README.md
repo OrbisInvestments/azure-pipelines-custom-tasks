@@ -55,11 +55,6 @@ To avoid concurrency issues shared clones are created [per-agent](https://github
 
 If a subset of your pipelines *clean sources* the shared clone will be deleted when they run. This will mean other pipelines that do not *clean sources* will end up having to reclone the repository into the shared location. 
 
-### TODO
-
-- [ ] Support [change of behavior](https://github.com/microsoft/azure-pipelines-agent/pull/2132) in agent versions [v2.149.2](https://github.com/microsoft/azure-pipelines-agent/releases/tag/v2.149.2) and above
-- [ ] Setup script for automating addition of task to pipelines
-
 ## License
 
 The Orbis Azure Pipeline Tasks project is licensed under the [MIT License](LICENSE)
