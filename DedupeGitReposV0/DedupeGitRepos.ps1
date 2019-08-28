@@ -1,11 +1,7 @@
 Param ()
 
-$collectionId 		= $env:SYSTEM_COLLECTIONID
-$teamProject 		= $env:SYSTEM_TEAMPROJECT
-
 $workFolder 		= $env:AGENT_WORKFOLDER
 
-$buildDefinitionId 	= $env:SYSTEM_DEFINITIONID
 $repository 		= $env:BUILD_REPOSITORY_ID
 $repositoryType 	= $env:BUILD_REPOSITORY_PROVIDER
 $sourceFolder 		= $env:BUILD_REPOSITORY_LOCALPATH
@@ -49,8 +45,6 @@ if ($repositoryType -in $gitProviders)  {
                 [pscustomobject]@{
                     repository  = $repository;
                     path        = Join-Path $sharedGitFolderName "1";
-                    collection  = $collectionId;
-                    teamProject = $teamProject;
                 }
             )
         }
@@ -59,7 +53,7 @@ if ($repositoryType -in $gitProviders)  {
         $config = Get-Content $configFilePath | ConvertFrom-Json
     }
 
-    $repo = $config.repos | Where-Object { $_.collection -eq $collectionId -and $_.teamProject -eq $teamProject -and $_.repository -eq $repository }
+    $repo = $config.repos | Where-Object { $_.repository -eq $repository }
 
     if (!$repo) {
 		Write-VstsTaskDebug "Configuring repository for deduplication"
@@ -69,17 +63,16 @@ if ($repositoryType -in $gitProviders)  {
         $repo = [pscustomobject]@{
             repository  = $repository;
             path        = Join-Path $sharedGitFolderName $config.lastFolderId;
-            collection  = $collectionId;
-            teamProject = $teamProject;
         }
         
         $config.repos += $repo
     }
 	
-	$sharedRepoFullPath = Join-Path $workFolder $repo.path
+    $sharedRepoFullPath = Join-Path $workFolder $repo.path
+    $sourceFolderTarget = (Get-Item $sourceFolder | Where-Object { $_.LinkType -eq 'SymbolicLink' }).Target
 
-    if ((Join-Path $sourceFolder "") -eq (Join-Path $sharedRepoFullPath "")) {
-        Write-Output "Build already using a deduped repository at $sourceFolder"
+    if ($sourceFolderTarget -and (Join-Path $sourceFolderTarget "") -eq (Join-Path $sharedRepoFullPath "")) {
+        Write-Output "Build already symlinked to deduped repository at $sharedRepoFullPath"
     }
     else {
         Write-Output "Migrating build to using a deduped repository at $sharedRepoFullPath"
@@ -95,14 +88,9 @@ if ($repositoryType -in $gitProviders)  {
             Write-VstsTaskDebug "Repository has already been deduped, removing source folder contents for build at $sourceFolder"
             Remove-Item $sourceFolder\* -Recurse -Force 
         }
-		
-        $sourceFolderJson = Join-Path $workFolder "\SourceRootMapping\$collectionId\$buildDefinitionId\SourceFolder.json"
-        $mappings = (Get-Content $sourceFolderJson) -join "`n" | ConvertFrom-Json
 
-        $mappings.build_sourcesdirectory = $repo.path
-
-        Write-VstsTaskDebug "Updating SourceFolder.json for build at $sourceFolderJson with deduped repository location $($repo.path)"
-        $mappings | ConvertTo-Json | Set-Content $sourceFolderJson	
+        Write-VstsTaskDebug "Symlinking source folder at $sourceFolder to deduped repository location at $sharedRepoFullPath"
+        New-Item -ItemType SymbolicLink $sourceFolder -Target $sharedRepoFullPath -Force | Out-Null
     }
 
     Write-Config $config
