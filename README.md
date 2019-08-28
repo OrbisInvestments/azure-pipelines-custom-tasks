@@ -19,6 +19,10 @@ Given the scenario where multiple Azure Pipelines use the same Git repository fo
 
 A more efficient approach would be for the agent to share a single clone of the repository amongst all pipelines that use it. The **Dedupe Git Repositories Task** stubs this behaviour by running a *post job execution* script that deduplicates the pipeline's clone and repoints its sources directory at a shared clone of the same repository. 
 
+### Prerequisites
+
+Clones of repositories are shared between pipelines by symlinking. This requires the account the Azure Pipelines Agent runs under to have administrator privileges on the local machine.
+
 ### Installation
 
 Head over to the latest Dedupe Git Repositories [release](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks/releases/latest), then download and extract **DedupeGitRepos.zip** from the release’s assets. 
