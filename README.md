@@ -11,13 +11,17 @@ An Azure Pipelines task for deduplicating clones of Git repositories on self-hos
 
 [![Build Status](https://dev.azure.com/orbisinvestments/Open%20Source/_apis/build/status/Azure%20Pipeline%20Custom%20Tasks/Centralize%20Git%20Repositories%20Task?branchName=master)](https://dev.azure.com/orbisinvestments/Open%20Source/_build/latest?definitionId=1&branchName=master)
 
-Works with Azure DevOps Server 2019 / Azure DevOps Services / TFS 2018 and self-hosted Windows Azure Pipelines Agents up to [v2.148.2](https://github.com/microsoft/azure-pipelines-agent/releases/tag/v2.148.2)
+Works with Azure DevOps Server 2019 / Azure DevOps Services / TFS 2018 and self-hosted Windows Azure Pipelines Agents.
 
 ### Motivation
 
-Given the scenario where multiple Azure Pipelines use the same Git repository as their source, the Azure Pipelines Agent will create a seperate clone of the repository for each of the pipelines it executes. For large repositories with many pipelines this can result in agent working directories that consume significant amounts of disk space. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
+Given the scenario where multiple Azure Pipelines use the same Git repository for their sources, the Azure Pipelines Agent will create a seperate clone of the repository for each of the pipelines it executes. For large repositories with many pipelines this can result in agent working directories that consume significant amounts of disk space. More details can be found in this issue here: [microsoft/azure-pipelines-agent/1506](https://github.com/microsoft/azure-pipelines-agent/issues/1506)
 
 A more efficient approach would be for the agent to share a single clone of the repository amongst all pipelines that use it. The **Dedupe Git Repositories Task** stubs this behaviour by running a *post job execution* script that deduplicates the pipeline's clone and repoints its sources directory at a shared clone of the same repository. 
+
+### Prerequisites
+
+Clones of repositories are shared between pipelines by symlinking. This requires the account the Azure Pipelines Agent runs under to have administrator privileges on the local machine.
 
 ### Installation
 
@@ -47,18 +51,13 @@ Or
 
 2. the pipeline's clone is deleted if a clone in the shared location does already exist
     
-Once this is done the task updates the pipeline's cached sources directory configuration to point at the shared clone. All subsequent executions of the pipeline on the agent will use the shared clone for its sources. 
+Once this is done the task symlinks the pipeline's sources directory to that of the shared clone. All subsequent executions of the pipeline on the agent will use the shared clone for its sources. 
 
 To avoid concurrency issues shared clones are created [per-agent](https://github.com/microsoft/azure-pipelines-agent/issues/1506#issuecomment-381361454).
 
 ### Considerations
 
 If a subset of your pipelines *clean sources* the shared clone will be deleted when they run. This will mean other pipelines that do not *clean sources* will end up having to reclone the repository into the shared location. 
-
-### TODO
-
-- [ ] Support [change of behavior](https://github.com/microsoft/azure-pipelines-agent/pull/2132) in agent versions [v2.149.2](https://github.com/microsoft/azure-pipelines-agent/releases/tag/v2.149.2) and above
-- [ ] Setup script for automating addition of task to pipelines
 
 ## License
 
