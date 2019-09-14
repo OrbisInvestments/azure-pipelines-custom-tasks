@@ -13,14 +13,14 @@ var configFileName: string = "DedupeGitReposConfig.json";
 var configFilePath: string = tl.resolve(sharedGitFolderPath, configFileName);
 var gitProviders = ["TfsGit", "Git", "GitHub"];
 
-function writeConfig(config: string) {
+function writeConfig(config: any) {
     console.log("Writing configuration to " + configFilePath);
 
     if (!tl.exist(sharedGitFolderPath)) {
         tl.mkdirP(sharedGitFolderPath);
     }
 
-    tl.writeFile(configFilePath, config);
+    tl.writeFile(configFilePath, JSON.stringify(config));
 }
 
 async function run() {
@@ -40,10 +40,12 @@ async function run() {
                 repos: [
                     {
                         repository: repository,
-                        path: tl.resolve(sharedGitFolderName, "1")
+                        path: tl.resolve(sharedGitFolderPath, "1")
                     }
                 ]
             };
+
+            writeConfig(config);
         }
         else {
             config = JSON.parse(fs.readFileSync(configFilePath, { encoding: "utf8" }));
@@ -58,7 +60,7 @@ async function run() {
 
             repo = {
                 repository: repository,
-                path: tl.resolve(sharedGitFolderName, config.lastFolderId)
+                path: tl.resolve(sharedGitFolderPath, config.lastFolderId)
             };
 
             config.repos.push(repo);
@@ -67,18 +69,20 @@ async function run() {
         }
 
         var sharedRepoFullPath: string = tl.resolve(workFolder, repo.path);
-        var sourceFolderTarget: string = fs.readlinkSync(sourceFolder, { encoding: "utf8" });
+        var sourceFolderIsLink = fs.lstatSync(sourceFolder).isSymbolicLink();
+        var sourceFolderTarget: string = sourceFolderIsLink ? fs.readlinkSync(sourceFolder, { encoding: "utf8" }) : "";
 
-        if (sourceFolderTarget && sourceFolderTarget == sharedRepoFullPath) {
+        if (sourceFolderIsLink && sourceFolderTarget == sharedRepoFullPath) {
             console.log("Build already symlinked to deduped repository at " + sharedRepoFullPath);
         }
         else {
             console.log("Migrating build to using a deduped repository at " + sharedRepoFullPath);
 
             if (!tl.exist(sharedRepoFullPath)) {
-                //shouldn't be necessary when we move sourceFolder
-                //console.log("Creating shared directory $sharedRepoFullPath for repository");
-                //tl.mkdirP(sharedRepoFullPath);
+                if (!tl.exist(sharedGitFolderPath)) {
+                    console.log("Creating shared directory " + sharedGitFolderPath + " for repositories");
+                    tl.mkdirP(sharedGitFolderPath);
+                }
 
                 console.log("Moving repository to shared directory from " + sourceFolder);
                 tl.mv(sourceFolder, sharedRepoFullPath);
