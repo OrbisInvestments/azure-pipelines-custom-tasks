@@ -83,8 +83,8 @@ async function run() {
         var sourceFolderIsLink = fs.lstatSync(sourceFolder).isSymbolicLink();
         var sourceFolderTarget: string = sourceFolderIsLink ? fs.readlinkSync(sourceFolder, { encoding: "utf8" }) : "";
 
-        console.log("sourceFolderIsLink: " + sourceFolderIsLink);
-        console.log("sourceFolderTarget: " + sourceFolderTarget);
+        tl.debug("sourceFolderIsLink: " + sourceFolderIsLink);
+        tl.debug("sourceFolderTarget: " + sourceFolderTarget);
 
         if (sourceFolderIsLink && sourceFolderTarget == sharedRepoFullPath) {
             console.log("Build already symlinked to deduped repository at " + sharedRepoFullPath);
