@@ -25,6 +25,17 @@ function writeConfig(config: any) {
 
 async function run() {
     try {
+        tl.debug("workFolder: " + workFolder);
+        tl.debug("repository: " + repository);
+        tl.debug("sourceFolder: " + sourceFolder);
+        tl.debug("sharedGitFolderPath: " + sharedGitFolderPath);
+        tl.debug("configFilePath: " + configFilePath);
+
+        if (sourceFolder.indexOf(sharedGitFolderPath) > -1) {
+            console.log(sourceFolder + " is already deduplicated, but not with symlink. Keeping it the way it is.");
+            return;
+        }
+
         if (gitProviders.indexOf(repositoryType) == -1) {
             tl.setResult(tl.TaskResult.Failed, "Unsupported repository type " + repositoryType + "; must be one of " + gitProviders.join(","));
             return;
@@ -60,7 +71,7 @@ async function run() {
 
             repo = {
                 repository: repository,
-                path: tl.resolve(sharedGitFolderPath, config.lastFolderId)
+                path: tl.resolve(sharedGitFolderPath, config.lastFolderId.toString())
             };
 
             config.repos.push(repo);
@@ -71,6 +82,9 @@ async function run() {
         var sharedRepoFullPath: string = tl.resolve(workFolder, repo.path);
         var sourceFolderIsLink = fs.lstatSync(sourceFolder).isSymbolicLink();
         var sourceFolderTarget: string = sourceFolderIsLink ? fs.readlinkSync(sourceFolder, { encoding: "utf8" }) : "";
+
+        console.log("sourceFolderIsLink: " + sourceFolderIsLink);
+        console.log("sourceFolderTarget: " + sourceFolderTarget);
 
         if (sourceFolderIsLink && sourceFolderTarget == sharedRepoFullPath) {
             console.log("Build already symlinked to deduped repository at " + sharedRepoFullPath);

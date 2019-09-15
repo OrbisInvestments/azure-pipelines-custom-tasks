@@ -20,8 +20,7 @@
   "instanceNameFormat": "Dedupe Git Repositories",
   "postjobexecution": {
     "Node": {
-      "target": "index.js",
-      "workingDirectory": "$(currentDirectory)"
+      "target": "index.js"
     }
   }
 }
