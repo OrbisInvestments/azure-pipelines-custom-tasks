@@ -61,7 +61,7 @@ async function run() {
             writeConfig(config);
         }
         else {
-            config = JSON.parse(fs.readFileSync(configFilePath, { encoding: "utf8" }));
+            config = JSON.parse(fs.readFileSync(configFilePath, { encoding: "utf8" }).replace(/^\uFEFF/, ''));
         }
 
         var repo = config.repos.find((r: any) => r.repository == repository);
@@ -99,9 +99,9 @@ async function run() {
             }
         }
         else {
-            var sourceFolderMappingPath: string = tl.resolve(workFolder, "SourceRootMapping", tl.getVariable("System.CollectionId"), tl.getVariable("Build.BuildId"), "SourceFolder.json");
+            var sourceFolderMappingPath: string = tl.resolve(workFolder, "SourceRootMapping", tl.getVariable("System.CollectionId"), tl.getVariable("System.DefinitionId"), "SourceFolder.json");
 
-            var sourceFolderMapping = JSON.parse(fs.readFileSync(sourceFolderMappingPath, { encoding: "utf8" }));
+            var sourceFolderMapping = JSON.parse(fs.readFileSync(sourceFolderMappingPath, { encoding: "utf8" }).replace(/^\uFEFF/, ''));
 
             // Test for repo.path, since sourceFolderMapping.build_sourcesdirectory is relative to _work.
             if (sourceFolderMapping.build_sourcesdirectory == repo.path) {
