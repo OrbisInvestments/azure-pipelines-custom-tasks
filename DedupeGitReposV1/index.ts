@@ -132,7 +132,12 @@ async function run() {
             }
             else {
                 console.log("Repository has already been deduped, removing source folder contents for build at " + sourceFolder);
-                tl.rmRF(sourceFolder);
+                try {
+                    tl.rmRF(sourceFolder);
+                }
+                catch (err) {
+                    console.log("Could not completely remove source folder at " + sourceFolder + ". Error: " + err.message);
+                }
             }
 
             if (useSymlink) {
