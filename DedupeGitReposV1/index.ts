@@ -13,6 +13,8 @@ var configFileName: string = "DedupeGitReposConfig.json";
 var configFilePath: string = tl.resolve(sharedGitFolderPath, configFileName);
 var gitProviders = ["TfsGit", "Git", "GitHub"];
 
+var useSymlink: boolean = false;
+
 function writeConfig(config: any) {
     console.log("Writing configuration to " + configFilePath);
 
@@ -31,8 +33,8 @@ async function run() {
         tl.debug("sharedGitFolderPath: " + sharedGitFolderPath);
         tl.debug("configFilePath: " + configFilePath);
 
-        if (sourceFolder.indexOf(sharedGitFolderPath) > -1) {
-            console.log(sourceFolder + " is already deduplicated, but not with symlink. Keeping it the way it is.");
+        if (sourceFolder.indexOf(sharedGitFolderPath) == 0) {
+            console.log(sourceFolder + " is already using deduplicated repo at " + sourceFolder);
             return;
         }
 
@@ -51,7 +53,7 @@ async function run() {
                 repos: [
                     {
                         repository: repository,
-                        path: tl.resolve(sharedGitFolderPath, "1")
+                        path: sharedGitFolderName + "/1"
                     }
                 ]
             };
@@ -71,7 +73,7 @@ async function run() {
 
             repo = {
                 repository: repository,
-                path: tl.resolve(sharedGitFolderPath, config.lastFolderId.toString())
+                path: sharedGitFolderName + "/" + config.lastFolderId.toString()
             };
 
             config.repos.push(repo);
@@ -80,16 +82,43 @@ async function run() {
         }
 
         var sharedRepoFullPath: string = tl.resolve(workFolder, repo.path);
-        var sourceFolderIsLink = fs.lstatSync(sourceFolder).isSymbolicLink();
-        var sourceFolderTarget: string = sourceFolderIsLink ? fs.readlinkSync(sourceFolder, { encoding: "utf8" }) : "";
+        var migrate: boolean = false;
 
-        tl.debug("sourceFolderIsLink: " + sourceFolderIsLink);
-        tl.debug("sourceFolderTarget: " + sourceFolderTarget);
+        if (useSymlink) {
+            var sourceFolderIsLink = fs.lstatSync(sourceFolder).isSymbolicLink();
+            var sourceFolderTarget: string = sourceFolderIsLink ? fs.readlinkSync(sourceFolder, { encoding: "utf8" }) : "";
 
-        if (sourceFolderIsLink && sourceFolderTarget == sharedRepoFullPath) {
-            console.log("Build already symlinked to deduped repository at " + sharedRepoFullPath);
+            tl.debug("sourceFolderIsLink: " + sourceFolderIsLink);
+            tl.debug("sourceFolderTarget: " + sourceFolderTarget);
+
+            if (sourceFolderIsLink && sourceFolderTarget == sharedRepoFullPath) {
+                console.log("Build already symlinked to deduped repository at " + sharedRepoFullPath);
+            }
+            else {
+                migrate = true;
+            }
         }
         else {
+            var sourceFolderMappingPath: string = tl.resolve(workFolder, "SourceRootMapping", tl.getVariable("System.CollectionId"), tl.getVariable("Build.BuildId"), "SourceFolder.json");
+
+            var sourceFolderMapping = JSON.parse(fs.readFileSync(sourceFolderMappingPath, { encoding: "utf8" }));
+
+            // Test for repo.path, since sourceFolderMapping.build_sourcesdirectory is relative to _work.
+            if (sourceFolderMapping.build_sourcesdirectory == repo.path) {
+                console.log("SourceFolderMapping already in place");
+            }
+            else {
+                console.log("Changing SourceFolderMapping to point to " + repo.path);
+
+                sourceFolderMapping.build_sourcesdirectory = repo.path;
+
+                tl.writeFile(sourceFolderMappingPath, JSON.stringify(sourceFolderMapping));
+
+                migrate = true;
+            }
+        }
+
+        if (migrate) {
             console.log("Migrating build to using a deduped repository at " + sharedRepoFullPath);
 
             if (!tl.exist(sharedRepoFullPath)) {
@@ -106,12 +135,13 @@ async function run() {
                 tl.rmRF(sourceFolder);
             }
 
-            console.log("Symlinking source folder at " + sourceFolder + " to deduped repository location at " + sharedRepoFullPath);
-            fs.symlinkSync(sharedRepoFullPath, sourceFolder, "dir");
+            if (useSymlink) {
+                console.log("Symlinking source folder at " + sourceFolder + " to deduped repository location at " + sharedRepoFullPath);
+                fs.symlinkSync(sharedRepoFullPath, sourceFolder, "dir");
+            }
         }
 
         console.log("Done");
-
     }
     catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message);
