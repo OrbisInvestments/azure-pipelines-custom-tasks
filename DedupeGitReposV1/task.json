@@ -1,0 +1,26 @@
+{
+  "id": "34210811-E663-4942-89AB-8A977836E042",
+  "name": "DedupeGitRepos",
+  "friendlyName": "Dedupe Git Repositories",
+  "description": "Reuse clones between pipelines that build the same git repository",
+  "helpUrl": "https://github.com/OrbisInvestments/azure-pipelines-custom-tasks",
+  "helpMarkDown": "[More Information](https://github.com/OrbisInvestments/azure-pipelines-custom-tasks#dedupe-git-repositories-task)",
+  "category": "Build",
+  "visibility": [
+    "Build"
+  ],
+  "author": "Orbis",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "preview": "true",
+  "minimumAgentVersion": "1.91.0",
+  "instanceNameFormat": "Dedupe Git Repositories",
+  "postjobexecution": {
+    "Node": {
+      "target": "index.js"
+    }
+  }
+}
